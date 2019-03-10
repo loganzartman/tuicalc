@@ -143,13 +143,25 @@ def get_by_name(layout, name):
         return None
     return find(layout[ROOT])
 
-def render(layout, screen):
+def _merge(source, target):
+    result = target.copy()
+    for k, v in source.items():
+        result[k] = v
+    return result
+
+STYLE_DEFAULTS = {
+    "bg": Color.rgb(0.2,0.2,0.2),
+    "fg": Color.rgb(0.8,0.8,0.8)
+    }
+
+def render(layout, screen, stylizer=lambda _: {}):
     assert(COMPUTED in layout)
     def render_fn(node):
-        screen.fill(node[C_X], node[C_Y], node[C_W], node[C_H], bg=Color.rgb(0,0,0))
-        screen.fill(node[C_X], node[C_Y], node[C_W]-1, node[C_H]-1, bg=Color.rgb(0.5,0.5,0.5))
+        style = _merge(stylizer(node), STYLE_DEFAULTS)
+        screen.fill(node[C_X], node[C_Y], node[C_W], node[C_H], bg=style["bg"] - Color.rgb(0.1,0.1,0.1))
+        screen.fill(node[C_X], node[C_Y], node[C_W]-1, node[C_H]-1, bg=style["bg"])
         if TEXT in node:
-            screen.print(str(node[TEXT]), node[C_X], node[C_Y], fg=Color.rgb(0,0,0))
+            screen.print(str(node[TEXT]), node[C_X], node[C_Y], fg=style["fg"])
         if ELEMENTS in node:
             for e in node[ELEMENTS]:
                 render_fn(e)
@@ -162,26 +174,42 @@ class LayoutTest(App):
         with open("layout.json") as f:
             self.layout = load_layout(f)
         self._dirty = True
+        self._layout_dirty = True
+        self._last_hit = None
     
     def update_layout(self):
+        def stylizer(node):
+            if node == self._last_hit:
+                return {"bg": Color.rgb(0.3,0.3,0.3), "fg": Color.rgb(0.9,0.9,0.9)}
+            return {}
+        
         if self._dirty:
             self._dirty = False
             self.screen.clear()
-            compute_layout(self.layout, self.screen)
-            render(self.layout, self.screen)
+            if self._layout_dirty:
+                compute_layout(self.layout, self.screen)
+            render(self.layout, self.screen, stylizer)
             self.screen.update()
 
     def on_mouse(self, m):
+        hit = get_at_pos(self.layout, m.x, m.y)
+
+        if hit != self._last_hit:
+            # Mouse over detection
+            self._last_hit = hit
+            self._dirty = True
+
         if m.left and m.down:
-            e = get_at_pos(self.layout, m.x, m.y)
-            if e and "name" in e:
-                num = int(e["name"][4:])
+            # click detection
+            if hit and "name" in hit:
+                num = int(hit["name"][4:])
                 out = get_by_name(self.layout, "text_output")
                 out[TEXT] += str(num)
                 self._dirty = True
 
     def on_resize(self):
         self._dirty = True
+        self._layout_dirty = True
 
     def on_frame(self):
         self.update_layout()
