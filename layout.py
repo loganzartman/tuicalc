@@ -154,14 +154,32 @@ STYLE_DEFAULTS = {
     "fg": Color.rgb(0.8,0.8,0.8)
     }
 
+def _render_box(node, screen, style):
+    col = 30
+
+    # background
+    screen.fill(node[C_X], node[C_Y], node[C_W], node[C_H], bg=style["bg"])
+    
+    # bottom/right
+    screen.fill(node[C_X] + node[C_W] - 1, node[C_Y] + 1, 1, node[C_H] - 1, char="│", fg=style["bg"] - col)
+    screen.fill(node[C_X] + 1, node[C_Y] + node[C_H] - 1, node[C_W] - 1, 1, char="─", fg=style["bg"] - col)
+
+    # top/left
+    screen.fill(node[C_X], node[C_Y], 1, node[C_H] - 1, char="│", fg=style["bg"] + col)
+    screen.fill(node[C_X], node[C_Y], node[C_W] - 1, 1, char="─", fg=style["bg"] + col)
+
+    screen.print("┘", node[C_X] + node[C_W] - 1, node[C_Y] + node[C_H] - 1, fg=style["bg"] - col)
+    screen.print("┌", node[C_X], node[C_Y], fg=style["bg"] + col)
+
+    if TEXT in node:
+        screen.print(str(node[TEXT]), node[C_X]+1, node[C_Y]+1, fg=style["fg"])
+
 def render(layout, screen, stylizer=lambda _: {}):
     assert(COMPUTED in layout)
     def render_fn(node):
-        style = _merge(stylizer(node), STYLE_DEFAULTS)
-        screen.fill(node[C_X], node[C_Y], node[C_W], node[C_H], bg=style["bg"] - Color.rgb(0.1,0.1,0.1))
-        screen.fill(node[C_X], node[C_Y], node[C_W]-1, node[C_H]-1, bg=style["bg"])
-        if TEXT in node:
-            screen.print(str(node[TEXT]), node[C_X], node[C_Y], fg=style["fg"])
+        if node[TYPE] == "box":
+            style = _merge(stylizer(node), STYLE_DEFAULTS)
+            _render_box(node, screen, style)
         if ELEMENTS in node:
             for e in node[ELEMENTS]:
                 render_fn(e)
@@ -171,7 +189,7 @@ class LayoutTest(App):
     def __init__(self):
         super().__init__(mouse=True)
         self.layout = None
-        with open("layout.json") as f:
+        with open("./layout.json") as f:
             self.layout = load_layout(f)
         self._dirty = True
         self._layout_dirty = True
@@ -179,9 +197,17 @@ class LayoutTest(App):
     
     def update_layout(self):
         def stylizer(node):
-            if node == self._last_hit:
-                return {"bg": Color.rgb(0.3,0.3,0.3), "fg": Color.rgb(0.9,0.9,0.9)}
-            return {}
+            style = {"bg": Color.rgb(0.7,0.7,0.7), "fg": Color.rgb(0.1,0.1,0.1)}
+            if "name" in node and node["name"] == "btn_=":
+                style["bg"] = Color.rgb(0.45,0,0)
+                style["fg"] = Color.rgb(1,1,1)
+            elif "name" in node and node["name"].startswith("btn"):
+                style["bg"] = 255 - style["bg"]
+                style["fg"] = 255 - style["fg"]
+            if node == self._last_hit and not ("name" in node and node["name"].startswith("text")):
+                style["bg"] -= 30
+                style["fg"] -= 30
+            return style
         
         if self._dirty:
             self._dirty = False

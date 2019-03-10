@@ -8,36 +8,53 @@
                 "text": "",
                 "height": {"fixed": 3}
             },
-            {
-                "type": "rows",
-                "elements": [
-                    {
-                        "type": "cols",
-                        "elements": [
-                            {"name": "btn_7", "type": "box", "text": 7},
-                            {"name": "btn_8", "type": "box", "text": 8},
-                            {"name": "btn_9", "type": "box", "text": 9}
-                        ]
-                    },
-                    {
-                        "type": "cols",
-                        "elements": [
-                            {"name": "btn_4", "type": "box", "text": 4},
-                            {"name": "btn_5", "type": "box", "text": 5},
-                            {"name": "btn_6", "type": "box", "text": 6}
-                        ]
-                    },
-                    {
-                        "type": "cols",
-                        "elements": [
-                            {"name": "btn_1", "type": "box", "text": 1},
-                            {"name": "btn_2", "type": "box", "text": 2},
-                            {"name": "btn_3", "type": "box", "text": 3}
-                        ]
-                    },
-                    {"name": "btn_0", "type": "box", "text": 0}
-                ]
-            }
-        ]
-    }
+			{
+				"type": "cols",
+				"elements": [
+					{
+						"type": "rows",
+						"width": {"flex": 2.5},
+						"elements": [
+							{
+							"type": "cols",
+								"elements": [
+									{"name": "num_7", "type": "box", "text": 7},
+									{"name": "num_8", "type": "box", "text": 8},
+									{"name": "num_9", "type": "box", "text": 9}
+								]
+							},
+							{
+								"type": "cols",
+								"elements": [
+									{"name": "num_4", "type": "box", "text": 4},
+									{"name": "num_5", "type": "box", "text": 5},
+									{"name": "num_6", "type": "box", "text": 6}
+								]
+							},
+							{
+								"type": "cols",
+								"elements": [
+									{"name": "num_1", "type": "box", "text": 1},
+									{"name": "num_2", "type": "box", "text": 2},
+									{"name": "num_3", "type": "box", "text": 3}
+								]
+							},
+							{"name": "num_0", "type": "box", "text": 0}
+						]
+					},
+					{
+						"type": "rows",
+						"width": {"flex": 1},
+						"elements": [
+							{"name": "btn_+", "type": "box", "text": "+"},
+							{"name": "btn_-", "type": "box", "text": "-"},
+							{"name": "btn_*", "type": "box", "text": "*"},
+							{"name": "btn_/", "type": "box", "text": "/"},
+							{"name": "btn_=", "type": "box", "text": "="}
+						]
+					}
+				]
+			}
+		]
+	}
 }
