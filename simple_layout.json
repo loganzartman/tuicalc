@@ -1,0 +1,22 @@
+{
+    "root": {
+        "type": "rows",
+        "elements": [
+            {
+                "name": "text_output",
+                "type": "box",
+                "text": "3.141",
+                "height": {"fixed": 3}
+            },
+            {
+                "type": "box",
+                "text": "Box 2"
+            },
+            {
+                "type": "box",
+                "text": "Box 3",
+                "height": {"flex": 2}
+            }
+        ]
+    }
+}
