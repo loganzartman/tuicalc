@@ -111,6 +111,38 @@ def compute_layout(layout, screen):
     compute(layout[ROOT], Context(0, 0, screen.w, screen.h, compute))
     layout[COMPUTED] = True
 
+def get_at_pos(layout, x, y):
+    """Get the topmost element covering the given position."""
+    assert(COMPUTED in layout)
+    def check(node):
+        if ELEMENTS in node:
+            for e in node[ELEMENTS]:
+                hit = check(e)
+                if hit:
+                    return hit
+        nx = node[C_X]
+        ny = node[C_Y]
+        nw = node[C_W]
+        nh = node[C_H]
+        if x >= nx and y >= ny and x < nx+nw and y < ny+nh:
+            return node
+        return None
+    return check(layout[ROOT])
+
+def get_by_name(layout, name):
+    """Get element by name."""
+    assert(COMPUTED in layout)
+    def find(node):
+        if ELEMENTS in node:
+            for e in node[ELEMENTS]:
+                found = find(e)
+                if found:
+                    return found
+        if "name" in node and node["name"] == name:
+            return node
+        return None
+    return find(layout[ROOT])
+
 def render(layout, screen):
     assert(COMPUTED in layout)
     def render_fn(node):
@@ -125,11 +157,11 @@ def render(layout, screen):
 
 class LayoutTest(App):
     def __init__(self):
-        super().__init__()
+        super().__init__(mouse=True)
         self.layout = None
         with open("layout.json") as f:
             self.layout = load_layout(f)
-        self._dirty = True  
+        self._dirty = True
     
     def update_layout(self):
         if self._dirty:
@@ -138,7 +170,16 @@ class LayoutTest(App):
             compute_layout(self.layout, self.screen)
             render(self.layout, self.screen)
             self.screen.update()
-    
+
+    def on_mouse(self, m):
+        if m.left and m.down:
+            e = get_at_pos(self.layout, m.x, m.y)
+            if e and "name" in e:
+                num = int(e["name"][4:])
+                out = get_by_name(self.layout, "text_output")
+                out[TEXT] += str(num)
+                self._dirty = True
+
     def on_resize(self):
         self._dirty = True
 

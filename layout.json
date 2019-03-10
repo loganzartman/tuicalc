@@ -5,7 +5,7 @@
             {
                 "name": "text_output",
                 "type": "box",
-                "text": "3.141",
+                "text": "",
                 "height": {"fixed": 3}
             },
             {
