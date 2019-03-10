@@ -47,43 +47,52 @@ def _dget(node, key, default=None):
         return default
     return node[key]
 
-def _compute_rows(node, context):
+def _compute_linear(node, context, horizontal=False):
     _compute_box(node, context)
-
+    key_dim = WIDTH if horizontal else HEIGHT
+    
     # compute available flex size and total flex weight
-    flex_height = context.h
+    flex_size = context.w if horizontal else context.h
     flex_weight = 0
     for e in node[ELEMENTS]:
-        h = _dget(e, HEIGHT, {})
-        h_fixed = _dget(h, U_FIXED)
-        if h_fixed is not None:
-            flex_height -= h_fixed       # remove from available flex size
+        s = _dget(e, key_dim, {})
+        s_fixed = _dget(s, U_FIXED)
+        if s_fixed is not None:
+            flex_size -= s_fixed         # remove from available flex size
         else:
-            h_flex = _dget(h, U_FLEX, 1) # default to flex 1 if no size specified
-            assert(h_flex != 0)
-            flex_weight += h_flex
-    assert(flex_height >= 0)
+            s_flex = _dget(s, U_FLEX, 1) # default to flex 1 if no size specified
+            assert(s_flex != 0)
+            flex_weight += s_flex
+    assert(flex_size >= 0)
 
     # assign dimensions and compute children
-    x = context.x
-    y = context.y
+    pos = context.x if horizontal else context.y
     for e in node[ELEMENTS]:
-        w = context.w
-        h = None
+        size = None
         
         # assign sizes
-        h_obj = _dget(e, HEIGHT, {})
-        h_fixed = _dget(h_obj, U_FIXED)
-        h_flex = _dget(h_obj, U_FLEX, 1)
-        if h_fixed is not None:
-            h = h_fixed
+        s_obj = _dget(e, key_dim, {})
+        s_fixed = _dget(s_obj, U_FIXED)
+        s_flex = _dget(s_obj, U_FLEX, 1)
+        if s_fixed is not None:
+            size = s_fixed
         else:
-            h = floor(float(h_flex) / flex_weight * flex_height)
+            size = floor(float(s_flex) / flex_weight * flex_size)
 
         # compute child
-        new_context = Context(x, y, w, h, context.compute)
+        ctx_x = pos if horizontal else context.x
+        ctx_y = pos if not horizontal else context.y
+        ctx_w = size if horizontal else context.w
+        ctx_h = size if not horizontal else context.h
+        new_context = Context(ctx_x, ctx_y, ctx_w, ctx_h, context.compute)
         context.compute(e, new_context)
-        y += h
+        pos += size
+
+def _compute_rows(node, context):
+    _compute_linear(node, context, horizontal=False)
+
+def _compute_cols(node, context):
+    _compute_linear(node, context, horizontal=True)
 
 def _compute_box(node, context):
     node[C_X] = context.x
@@ -96,6 +105,7 @@ def compute_layout(layout, screen):
     def compute(node, context):
         return {
             "rows": _compute_rows,
+            "cols": _compute_cols,
             "box": _compute_box
         }[node[TYPE]](node, context)
     compute(layout[ROOT], Context(0, 0, screen.w, screen.h, compute))
@@ -107,7 +117,7 @@ def render(layout, screen):
         screen.fill(node[C_X], node[C_Y], node[C_W], node[C_H], bg=Color.rgb(0,0,0))
         screen.fill(node[C_X], node[C_Y], node[C_W]-1, node[C_H]-1, bg=Color.rgb(0.5,0.5,0.5))
         if TEXT in node:
-            screen.print(node[TEXT], node[C_X], node[C_Y], fg=Color.rgb(0,0,0))
+            screen.print(str(node[TEXT]), node[C_X], node[C_Y], fg=Color.rgb(0,0,0))
         if ELEMENTS in node:
             for e in node[ELEMENTS]:
                 render_fn(e)
@@ -117,13 +127,14 @@ class LayoutTest(App):
     def __init__(self):
         super().__init__()
         self.layout = None
-        with open("simple_layout.json") as f:
+        with open("layout.json") as f:
             self.layout = load_layout(f)
         self._dirty = True  
     
     def update_layout(self):
         if self._dirty:
             self._dirty = False
+            self.screen.clear()
             compute_layout(self.layout, self.screen)
             render(self.layout, self.screen)
             self.screen.update()
