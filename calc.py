@@ -13,14 +13,7 @@ class CalcApp(App):
         self._last_hit = None
     
     def update_layout(self):
-        def stylizer(node):
-            style = {"bg": Color.rgb(0.7,0.7,0.7), "fg": Color.rgb(0.1,0.1,0.1)}
-            if "name" in node and node["name"] == "btn_=":
-                style["bg"] = Color.rgb(0.45,0,0)
-                style["fg"] = Color.rgb(1,1,1)
-            elif "name" in node and node["name"].startswith("btn"):
-                style["bg"] = 255 - style["bg"]
-                style["fg"] = 255 - style["fg"]
+        def stylizer(node, style):
             if node == self._last_hit and not ("name" in node and node["name"].startswith("text")):
                 style["bg"] -= 30
                 style["fg"] -= 30

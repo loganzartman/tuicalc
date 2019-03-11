@@ -9,6 +9,7 @@ ELEMENTS = "elements"
 WIDTH = "width"
 HEIGHT = "height"
 TEXT = "text"
+STYLE = "style"
 U_FIXED = "fixed"
 U_FLEX = "flex"
 
@@ -154,6 +155,14 @@ STYLE_DEFAULTS = {
     "fg": Color.rgb(0.8,0.8,0.8)
     }
 
+def _parse_style(style):
+    s = style.copy()
+    if "fg" in s:
+        s["fg"] = Color(s["fg"])
+    if "bg" in s:
+        s["bg"] = Color(s["bg"])
+    return s
+
 def _render_box(node, screen, style):
     col = 30
 
@@ -174,13 +183,16 @@ def _render_box(node, screen, style):
     if TEXT in node:
         screen.print(str(node[TEXT]), node[C_X]+1, node[C_Y]+1, fg=style["fg"])
 
-def render(layout, screen, stylizer=lambda _: {}):
+def render(layout, screen, stylizer=lambda _, __: {}):
     assert(COMPUTED in layout)
-    def render_fn(node):
+    def render_fn(node, base_style):
+        style = base_style
+        if STYLE in node:
+            style = _merge(_parse_style(node[STYLE]), style)
+        style = _merge(stylizer(node, style), style)
         if node[TYPE] == "box":
-            style = _merge(stylizer(node), STYLE_DEFAULTS)
             _render_box(node, screen, style)
         if ELEMENTS in node:
             for e in node[ELEMENTS]:
-                render_fn(e)
-    render_fn(layout[ROOT])
+                render_fn(e, style.copy())
+    render_fn(layout[ROOT], STYLE_DEFAULTS.copy())

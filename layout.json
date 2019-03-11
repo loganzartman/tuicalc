@@ -9,11 +9,15 @@
                 "height": {"fixed": 3}
             },
 			{
-				"type": "cols",
+				"type": "cols",	
 				"elements": [
 					{
 						"type": "rows",
 						"width": {"flex": 2.5},
+						"style": {
+							"bg": [0.8, 0.8, 0.8],
+							"fg": [0.1, 0.1, 0.1]
+						},
 						"elements": [
 							{
 							"type": "cols",
@@ -45,12 +49,17 @@
 					{
 						"type": "rows",
 						"width": {"flex": 1},
+						"style": {
+							"bg": [0.3, 0.3, 0.3],
+							"fg": [0.8, 0.8, 0.8]
+						},
 						"elements": [
+							{"name": "btn_ac", "type": "box", "text": "AC", "style": {"bg": [0, 0.55, 0.75], "fg": [0.1, 0.1, 0.1]}},
 							{"name": "btn_+", "type": "box", "text": "+"},
 							{"name": "btn_-", "type": "box", "text": "-"},
 							{"name": "btn_*", "type": "box", "text": "*"},
 							{"name": "btn_/", "type": "box", "text": "/"},
-							{"name": "btn_=", "type": "box", "text": "="}
+							{"name": "btn_=", "type": "box", "text": "=", "style": {"bg": [0.45, 0, 0]}}
 						]
 					}
 				]
