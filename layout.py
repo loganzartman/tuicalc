@@ -152,7 +152,9 @@ def _merge(source, target):
 
 STYLE_DEFAULTS = {
     "bg": Color.rgb(0.2,0.2,0.2),
-    "fg": Color.rgb(0.8,0.8,0.8)
+    "fg": Color.rgb(0.8,0.8,0.8),
+    "h-align": "left",
+    "v-align": "top"
     }
 
 def _parse_style(style):
@@ -181,7 +183,21 @@ def _render_box(node, screen, style):
     screen.print("┌", node[C_X], node[C_Y], fg=style["bg"] + col)
 
     if TEXT in node:
-        screen.print(str(node[TEXT]), node[C_X]+1, node[C_Y]+1, fg=style["fg"])
+        lines = str(node[TEXT]).splitlines()
+        th = len(lines)
+        halign = style["h-align"]
+        valign = style["v-align"]
+        def start_pos(align, size, max_size):
+            if align == "left" or align == "top":
+                return 0
+            if align == "right" or align == "bottom":
+                return max_size - size
+            if align == "center":
+                return floor(max_size / 2 - size / 2)
+            raise Exception("invalid alignment specifier: {}".format(align))
+        y0 = start_pos(valign, th, node[C_H] - 1) + node[C_Y] + 1
+        for i, line in enumerate(lines):
+            screen.print(line, start_pos(halign, len(line), node[C_W] - 1) + node[C_X] + 1, y0+i, fg=style["fg"])
 
 def render(layout, screen, stylizer=lambda _, __: {}):
     assert(COMPUTED in layout)

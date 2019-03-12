@@ -10,6 +10,10 @@
             },
 			{
 				"type": "cols",	
+				"style": {
+					"v-align": "center",
+					"h-align": "center"
+				},
 				"elements": [
 					{
 						"type": "rows",
