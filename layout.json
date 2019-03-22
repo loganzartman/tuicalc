@@ -60,10 +60,10 @@
 						},
 						"elements": [
 							{"name": "btn_ac", "type": "box", "text": "AC", "style": {"bg": [0, 0.55, 0.75], "fg": [0.1, 0.1, 0.1]}},
-							{"name": "btn_+", "type": "box", "text": "+"},
-							{"name": "btn_-", "type": "box", "text": "-"},
-							{"name": "btn_*", "type": "box", "text": "*"},
 							{"name": "btn_/", "type": "box", "text": "/"},
+							{"name": "btn_*", "type": "box", "text": "*"},
+							{"name": "btn_-", "type": "box", "text": "-"},
+							{"name": "btn_+", "type": "box", "text": "+"},
 							{"name": "btn_=", "type": "box", "text": "=", "style": {"bg": [0.45, 0, 0]}}
 						]
 					}
