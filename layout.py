@@ -180,6 +180,8 @@ def _render_box(node, screen, style):
     screen.fill(node[C_X], node[C_Y], node[C_W] - 1, 1, char="─", fg=style["bg"] + col)
 
     screen.print("┘", node[C_X] + node[C_W] - 1, node[C_Y] + node[C_H] - 1, fg=style["bg"] - col)
+    screen.print("└", node[C_X], node[C_Y] + node[C_H] - 1, fg=style["bg"] + col)
+    screen.print("┐", node[C_X] + node[C_W] - 1, node[C_Y], fg=style["bg"] - col)
     screen.print("┌", node[C_X], node[C_Y], fg=style["bg"] + col)
 
     if TEXT in node:
