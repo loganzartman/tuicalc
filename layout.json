@@ -6,7 +6,8 @@
                 "name": "text_output",
                 "type": "box",
                 "text": "",
-                "height": {"fixed": 3}
+				"height": {"fixed": 3},
+				"style": {"h-align": "right"}
             },
 			{
 				"type": "cols",	

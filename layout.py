@@ -191,7 +191,7 @@ def _render_box(node, screen, style):
             if align == "left" or align == "top":
                 return 0
             if align == "right" or align == "bottom":
-                return max_size - size
+                return max_size - size - 1
             if align == "center":
                 return floor(max_size / 2 - size / 2)
             raise Exception("invalid alignment specifier: {}".format(align))
