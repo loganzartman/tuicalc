@@ -70,22 +70,36 @@ class CalcApp(App):
             # click detection
             if hit:
                 name = node_name(hit)
-                if name == "btn_ac":
-                    self.clear_all()
-                elif name == "btn_+":
-                    self.set_operator(operator.add)
-                elif name == "btn_-":
-                    self.set_operator(operator.sub)
-                elif name == "btn_*":
-                    self.set_operator(operator.mul)
-                elif name == "btn_/":
-                    self.set_operator(operator.floordiv)
-                elif name == "btn_=":
-                    self.apply_operator()
-                elif name.startswith("num"):
-                    num = int(hit["name"][4:])
-                    self.display_register = self.display_register * 10 + num
-                    self._dirty = True
+                if name.startswith("btn") or name.startswith("num"):
+                    self.handle_input(name[4:])
+
+    def handle_input(self, char):
+        if char == "c":
+            self.clear_all()
+        elif char == "+":
+            self.set_operator(operator.add)
+        elif char == "-":
+            self.set_operator(operator.sub)
+        elif char == "*":
+            self.set_operator(operator.mul)
+        elif char == "/":
+            self.set_operator(operator.floordiv)
+        elif char == "=":
+            self.apply_operator()
+        elif char in "0123456789":
+            num = int(char)
+            self.display_register = self.display_register * 10 + num
+            self._dirty = True
+
+    def on_key(self, key):
+        if key.char:
+            if key.char == "\n":
+                self.handle_input("=")
+            else:
+                self.handle_input(key.char)
+        if key == "backspace":
+            self.display_register //= 10
+            self._dirty = True
 
     def on_resize(self):
         self._dirty = True

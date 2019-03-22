@@ -59,7 +59,7 @@
 							"fg": [0.8, 0.8, 0.8]
 						},
 						"elements": [
-							{"name": "btn_ac", "type": "box", "text": "AC", "style": {"bg": [0, 0.55, 0.75], "fg": [0.1, 0.1, 0.1]}},
+							{"name": "btn_c", "type": "box", "text": "AC", "style": {"bg": [0, 0.55, 0.75], "fg": [0.1, 0.1, 0.1]}},
 							{"name": "btn_/", "type": "box", "text": "/"},
 							{"name": "btn_*", "type": "box", "text": "*"},
 							{"name": "btn_-", "type": "box", "text": "-"},
