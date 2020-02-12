@@ -1,5 +1,5 @@
-from termpixels.screen import Color
-from termpixels.app import App
+from termpixels import Color
+from termpixels.app import LegacyApp as App
 from layout import load_layout, compute_layout, render, get_at_pos, get_by_name
 import operator
 
@@ -109,4 +109,4 @@ class CalcApp(App):
         self.update_layout()
 
 if __name__ == "__main__":
-    CalcApp().start()
+    CalcApp().run()

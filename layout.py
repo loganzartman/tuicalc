@@ -1,7 +1,7 @@
 import json
 from math import floor
-from termpixels.screen import Color
-from termpixels.app import App
+from termpixels import Color
+from termpixels.app import LegacyApp as App
 
 ROOT = "root"
 TYPE = "type"
